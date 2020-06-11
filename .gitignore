@@ -10,3 +10,4 @@
 /config/salts.php
 /config/developer.php
 /config/database.php
+styleguide-web/*
