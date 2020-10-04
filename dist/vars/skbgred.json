@@ -1,0 +1,18 @@
+{
+	"palette-1": "#e30613",
+	"palette-1-safe": "#e30613",
+	"palette-1-text": "#fff",
+	"palette-2": "#d35225",
+	"palette-2-safe": "#d35225",
+	"palette-2-text": "#fff",
+	"palette-3": "#faa94d",
+	"palette-3-safe": "#faa94d",
+	"palette-3-text": "#fff",
+	"palette-4": "#58595b",
+	"palette-4-safe": "#58595b",
+	"palette-4-text": "#fff",
+	"palette-5": "#dadada",
+	"palette-5-safe": "#dadada",
+	"palette-5-text": "#fff",
+	"override-base-font-family": "'Helvetica Neue', Helvetica, Arial, Verdana, Tahoma"
+}

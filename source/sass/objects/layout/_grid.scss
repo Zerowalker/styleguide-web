@@ -25,148 +25,148 @@
 //
 
 @mixin generateGrid($columns, $breakpoints, $gutters, $includePrint: true) {
-    .grid {
-        display: flex;
-        flex-wrap: wrap;
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  %column {
+    position: relative;
+    width: 100%;
+    min-height: 1px;
+  }
+
+  //Column styling to all children
+  .grid > * {
+    @extend %column;
+  }
+
+  //Gutter styles
+  @each $breakpoint, $gutter in $gutters {
+    @include mq($breakpoint) {
+      .grid {
+        margin-left: $gutter/2 * -1;
+        margin-right: $gutter/2 * -1;
+      }
+
+      %column {
+        padding-right: $gutter/2;
+        padding-left: $gutter/2;
+        // margin-bottom: $gutter;
+      }
+    }
+  }
+
+  //Include print breakpoint
+  @if $includePrint == true {
+    $breakpoints: append($breakpoints, 'print');
+  }
+
+  //Generate Columns
+  @each $breakpoint in $breakpoints {
+    //Generate list of column classes
+    $columnClasses: ();
+    @for $i from 1 to $columns + 1 {
+      @if $i == 1 {
+        $columnClasses: append($columnClasses, '.grid-#{$breakpoint}-#{$i}');
+      } @else {
+        $columnClasses: append($columnClasses, ', .grid-#{$breakpoint}-#{$i}');
+      }
     }
 
-    %column {
-        position: relative;
-        width: 100%;
-        min-height: 1px;
+    //Apply common column styles
+    #{$columnClasses},
+    .grid-#{$breakpoint}-auto,
+    .grid-#{$breakpoint}-fit-content {
+      @extend %column;
     }
 
-    //Column styling to all children
-    .grid > * {
-        @extend %column;
-    }
+    //Breakpoint specific
+    @include mq($breakpoint) {
+      //Auto width column (eg .grid-md-auto)
+      .grid-#{$breakpoint}-auto {
+        flex-basis: 0;
+        flex-grow: 1;
+        max-width: 100%;
+      }
 
-    //Gutter styles
-    @each $breakpoint, $gutter in $gutters {
-        @include mq($breakpoint) {
-            .grid {
-                margin-left: $gutter/2 * -1;
-                margin-right: $gutter/2 * -1;
-            }
+      //Fit content column (eg .grid-md-fit-content)
+      .grid-#{$breakpoint}-fit-content {
+        flex: 0 0 auto;
+        width: auto;
+        max-width: none;
+      }
 
-            %column {
-                padding-right: $gutter/2;
-                padding-left: $gutter/2;
-                // margin-bottom: $gutter;
-            }
+      //Width based Columns (eg .grid-md-6)
+      @for $i from 1 to $columns + 1 {
+        .grid-#{$breakpoint}-#{$i} {
+          flex: 0 0 #{$i / $columns * 100 * 1%};
+          max-width: #{$i / $columns * 100 * 1%};
         }
-    }
+      }
 
-    //Include print breakpoint
-    @if $includePrint == true {
-        $breakpoints: append($breakpoints, 'print');
-    }
-
-    //Generate Columns
-    @each $breakpoint in $breakpoints {
-
-        //Generate list of column classes
-        $columnClasses: ();
-        @for $i from 1 to $columns + 1 {
-            $columnClasses: append($columnClasses, ", .grid-#{$breakpoint}-#{$i}");
+      //Order (eg .order-md-6)
+      @for $i from 1 to $columns + 1 {
+        .order-#{$breakpoint}-#{$i} {
+          order: $i;
         }
+      }
 
-        //Apply common column styles
-        #{$columnClasses},
-        .grid-#{$breakpoint}-auto,
-        .grid-#{$breakpoint}-fit-content {
-            @extend %column;
+      //Offset (eg .offset-md-6)
+      @for $i from 1 to $columns + 1 {
+        .offset-#{$breakpoint}-#{$i} {
+          margin-left: #{$i / $columns * 100 * 1%};
         }
-
-        //Breakpoint specific
-        @include mq($breakpoint) {
-
-            //Auto width column (eg .grid-md-auto)
-            .grid-#{$breakpoint}-auto {
-                flex-basis: 0;
-                flex-grow: 1;
-                max-width: 100%;
-            }
-
-            //Fit content column (eg .grid-md-fit-content)
-            .grid-#{$breakpoint}-fit-content {
-                flex: 0 0 auto;
-                width: auto;
-                max-width: none;
-            }
-
-            //Width based Columns (eg .grid-md-6)
-            @for $i from 1 to $columns + 1 {
-                .grid-#{$breakpoint}-#{$i} {
-                    flex: 0 0 #{$i / $columns * 100 * 1%};
-                    max-width: #{$i / $columns * 100 * 1%};
-                }
-            }
-
-            //Order (eg .order-md-6)
-            @for $i from 1 to $columns + 1 {
-                .order-#{$breakpoint}-#{$i} {
-                    order: $i;
-                }
-            }
-
-            //Offset (eg .offset-md-6)
-            @for $i from 1 to $columns + 1 {
-                .offset-#{$breakpoint}-#{$i} {
-                    margin-left: #{$i / $columns * 100 * 1%};
-                }
-            }
-        }
+      }
     }
+  }
 
-    //Prevent old classes from breaking
-    .grid-fit-content {
-        @extend .grid-xs-fit-content;
-    }
-    .grid-auto {
-        @extend .grid-xs-auto;
-    }
+  //Prevent old classes from breaking
+  .grid-fit-content {
+    @extend .grid-xs-fit-content;
+  }
+  .grid-auto {
+    @extend .grid-xs-auto;
+  }
 }
 
 $grid-columns: 12 !default;
 $grid-breakpoints: map-keys($mix-mq-breakpoints) !default;
 $grid-gutters: (
-    xs : $baseline,
-    sm : $baseline * 4
+  xs: $baseline,
+  sm: $baseline * 4,
 ) !default;
 
 @include generateGrid($grid-columns, $grid-breakpoints, $grid-gutters);
 
 .grid.no-gutter {
-    margin-left: 0;
-    margin-right: 0;
+  margin-left: 0;
+  margin-right: 0;
 
-    > [class*="grid-"]:not(.grid, [class*="grid--"]) {
-        padding-left: 0;
-        padding-right: 0;
-    }
+  > [class*='grid-']:not(.grid, [class*='grid--']) {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
-
 
 .grid.sm-gutter {
-    margin-left: -8px;
-    margin-right: -8px;
+  margin-left: -8px;
+  margin-right: -8px;
 
-    > [class*="grid-"]:not(.grid, [class*="grid--"]) {
-        padding-left: 8px;
-        padding-right: 8px;
-    }
+  > [class*='grid-']:not(.grid, [class*='grid--']) {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
 }
 
-
 .grid--columns {
-    > [class*="grid-"]:not(.grid, [class*="grid--"]) {
-        margin-bottom: $baseline * 4;
-    }
+  > [class*='grid-']:not(.grid, [class*='grid--']) {
+    margin-bottom: $baseline * 4;
+  }
 }
 
 .grid--margins {
-     @extend .grid--columns;
+  @extend .grid--columns;
 }
 
 //Temporary scope fix!
@@ -174,23 +174,23 @@ $grid-gutters: (
 .modularity-mod-posts > .grid,
 .modularity-mod-contact > .grid,
 .mod-posts > .grid {
-    @extend .grid--columns;
+  @extend .grid--columns;
 }
 
 .customer-feedback-container {
-    margin-bottom: $baseline * 4;
+  margin-bottom: $baseline * 4;
 }
 
 .grid.grid-va-middle {
-    align-items: center;
+  align-items: center;
 }
 
 .grid.grid-va-bottom {
-    align-items: flex-end;
+  align-items: flex-end;
 }
 
 .grid.grid-va-top {
-    align-items: top;
+  align-items: top;
 }
 
 // ***************************************************************
@@ -217,7 +217,6 @@ $grid-gutters: (
 // .grid-fit-content {
 //     width: 1%;
 // }
-
 
 // ***************************************************************
 // *** Grid column gutter
@@ -327,7 +326,6 @@ $grid-gutters: (
 }
 */
 
-
 // ***************************************************************
 // *** Grid inside grid, fix margins
 // ***************************************************************
@@ -336,7 +334,6 @@ $grid-gutters: (
 
 //         margin-left: -($grid-gutter-xs / 2);
 //         margin-right: -($grid-gutter-xs / 2);
-
 
 //         & + .grid {
 //             margin-top: $grid-gutter-xs;
@@ -412,10 +409,10 @@ $grid-gutters: (
 /***************************************************************
 *** Styleguide helper
 ***************************************************************/
-.grid-example [class*="grid-"]:not(.grid, [class*="grid--"]) {
-    background-color: $creamy;
-    border: 1px solid $creamy-darker;
-    overflow: hidden;
+.grid-example [class*='grid-']:not(.grid, [class*='grid--']) {
+  background-color: $creamy;
+  border: 1px solid $creamy-darker;
+  overflow: hidden;
 }
 
 // .grid.no-gutter [class*="grid-"] {
@@ -431,43 +428,38 @@ $grid-gutters: (
 //     }
 // }
 
-
-
 // ==========================================================================
 // Modularity grid
 // ==========================================================================
 
-.grid-xs-12[class*="modularity-mod-"],
-.grid-sm-12[class*="modularity-mod-"],
-.grid-md-12[class*="modularity-mod-"],
-.grid-lg-12[class*="modularity-mod-"] {
-    & + .grid-xs-12[class*="modularity-mod-"],
-    & + .grid-sm-12[class*="modularity-mod-"],
-    & + .grid-md-12[class*="modularity-mod-"],
-    & + .grid-lg-12[class*="modularity-mod-"] {
-        margin-top: $grid-gutter-xs;
+.grid-xs-12[class*='modularity-mod-'],
+.grid-sm-12[class*='modularity-mod-'],
+.grid-md-12[class*='modularity-mod-'],
+.grid-lg-12[class*='modularity-mod-'] {
+  & + .grid-xs-12[class*='modularity-mod-'],
+  & + .grid-sm-12[class*='modularity-mod-'],
+  & + .grid-md-12[class*='modularity-mod-'],
+  & + .grid-lg-12[class*='modularity-mod-'] {
+    margin-top: $grid-gutter-xs;
 
-        @media #{$screen-sm-up} {
-            margin-top: $grid-gutter-sm;
-        }
-
-        @media #{$screen-md-up} {
-            margin-top: $grid-gutter-md;
-        }
-
-        @media #{$screen-lg-up} {
-            margin-top: $grid-gutter-lg;
-        }
+    @media #{$screen-sm-up} {
+      margin-top: $grid-gutter-sm;
     }
-}
 
+    @media #{$screen-md-up} {
+      margin-top: $grid-gutter-md;
+    }
+
+    @media #{$screen-lg-up} {
+      margin-top: $grid-gutter-lg;
+    }
+  }
+}
 
 // ==========================================================================
 // Form grid
 // ==========================================================================
 
 .grid.mod-form-field + .grid.mod-form-field {
-    margin-top: $baseline * 3;
+  margin-top: $baseline * 3;
 }
-
-

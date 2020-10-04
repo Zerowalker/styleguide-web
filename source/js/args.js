@@ -1,38 +1,37 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
+/* eslint-disable no-empty-function */
 //
 // @name Language
 //
 HelsingborgPrime = HelsingborgPrime || {};
 
 HelsingborgPrime.Args = (function ($) {
+  function Args() {}
 
-    function Args() {
-
+  Args.prototype.get = function (s) {
+    if (typeof HbgPrimeArgs === 'undefined') {
+      return false;
     }
 
-    Args.prototype.get = function (s) {
-        if (typeof HbgPrimeArgs == 'undefined') {
-            return false;
-        }
+    let o = HbgPrimeArgs;
 
-        var o = HbgPrimeArgs;
+    s = s.replace(/\[(\w+)\]/g, '.$1');
+    s = s.replace(/^\./, '');
 
-        s = s.replace(/\[(\w+)\]/g, '.$1');
-        s = s.replace(/^\./, '');
+    const a = s.split('.');
+    for (let i = 0, n = a.length; i < n; ++i) {
+      const k = a[i];
 
-        var a = s.split('.');
-        for (var i = 0, n = a.length; i < n; ++i) {
-            var k = a[i];
+      if (k in o) {
+        o = o[k];
+      } else {
+        return false;
+      }
+    }
 
-            if (k in o) {
-                o = o[k];
-            } else {
-                return false;
-            }
-        }
+    return o;
+  };
 
-        return o;
-    };
-
-    return new Args();
-
+  return new Args();
 })(jQuery);

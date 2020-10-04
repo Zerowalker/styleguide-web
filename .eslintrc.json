@@ -1,0 +1,18 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "script",
+    "ecmaFeatures": {}
+  },
+  "rules": {
+    "prettier/prettier": "error"
+  },
+  "plugins": ["prettier"],
+
+  "extends": ["esnext", "esnext/style-guide", "plugin:prettier/recommended"],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jquery": true
+  }
+}
